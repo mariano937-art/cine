@@ -1,6 +1,9 @@
 package cine.ar.pb2.unlam;
 
+import java.util.Map;
 import java.util.Scanner;
+
+
 
 public class Main {
 
@@ -156,6 +159,7 @@ public class Main {
 			return "INFANTIL";
 		return "GENERAL";
 	}
+//venderBoleto corregido
 
 	private static void venderBoleto() {
 		if (sala.getPeliculaActual() == null) {
@@ -167,24 +171,28 @@ public class Main {
 		System.out.println("Película actual: " + sala.getPeliculaActual().getTitulo());
 		System.out.println("Edad mínima requerida: " + sala.getPeliculaActual().getEdadMinima() + " años");
 
-		sala.getButacas();
+		mostrarButacas(sala); // Muestra las butacas
 
 		System.out.print("Ingrese el nombre del comprador: ");
 		scanner.nextLine(); // Limpiar buffer
 		String nombreComprador = scanner.nextLine();
 
-		System.out.print("Ingrese la fila del asiento: ");
-		int fila = scanner.nextInt();
-		System.out.print("Ingrese la columna del asiento: ");
+		System.out.print("Ingrese la fila del asiento (por ejemplo, A, B, C...): ");
+		String fila = scanner.nextLine().toUpperCase(); // fila en mayúsculas
+
+		System.out.print("Ingrese el número de columna del asiento: ");
 		int columna = scanner.nextInt();
+
 		System.out.print("Ingrese la edad del cliente: ");
 		int edad = scanner.nextInt();
+
+		String claveAsiento = fila + columna;
 
 		boolean exito = sala.venderBoleto(fila, columna, edad, nombreComprador);
 
 		if (exito) {
 			System.out.println("🎉 ¡Boleto vendido exitosamente!");
-			sala.getButacas();
+			mostrarButacas(sala); // Muestra el estado de las butacas después de vender el boleto
 		} else {
 			System.out.println("❌ No se pudo vender el boleto.");
 		}
@@ -192,18 +200,23 @@ public class Main {
 
 	private static void liberarAsiento() {
 		System.out.println("\n🔓 LIBERAR ASIENTO");
-		sala.getButacas();
+		mostrarButacas(sala); // Muestra las butacas
 
-		System.out.print("Ingrese la fila del asiento a liberar: ");
-		int fila = scanner.nextInt();
-		System.out.print("Ingrese la columna del asiento a liberar: ");
+		System.out.print("Ingrese la fila del asiento a liberar (por ejemplo, A, B, C...): ");
+		String fila = scanner.nextLine().toUpperCase();
+
+		System.out.print("Ingrese el número de columna del asiento a liberar: ");
 		int columna = scanner.nextInt();
+
+		String claveAsiento = fila + columna;
 
 		boolean exito = sala.liberarAsiento(fila, columna);
 
 		if (exito) {
 			System.out.println("🎉 ¡Asiento liberado exitosamente!");
-			sala.getButacas();
+			mostrarButacas(sala); // Muestra  estado de las butacas después de liberar el asiento
+		} else {
+			System.out.println("❌ No se pudo liberar el asiento.");
 		}
 	}
 
@@ -223,33 +236,47 @@ public class Main {
 
 		if (confirmacion.equalsIgnoreCase("s") || confirmacion.equalsIgnoreCase("si")) {
 			sala.reiniciarSala();
-			sala.getButacas();
-			System.out.println("!Se reinicio con exito¡");
+
 		} else {
 			System.out.println("❌ Operación cancelada.");
 		}
 	}
 
 	public static void mostrarButacas(SalaCine sala) {
-		Asiento[][] butacas = sala.getButacas();
+		// Obtenemos el mapa de butacas desde la clase SalaCine
+		Map<String, Asiento> butacas = sala.getButacas();
 
 		System.out.println("\n=== ESTADO DE LA SALA ===");
+		// Mostrar la película si está definida
 		if (sala.getPeliculaActual() != null) {
 			System.out.println("🎬 Película: " + sala.getTitulo());
 		}
+
 		System.out.println(
 				"📊 Ocupación: " + sala.contarAsientosOcupados() + "/" + sala.getTotalAsientos() + " asientos");
+
+		// Obtener las filas y columnas de las butacas, asumiendo que las letras de fila
+		// son 'A', 'B', 'C', ...
+		int filas = sala.getButacas().size() > 0 ? sala.getButacas().keySet().toArray(new String[0])[0].length() : 0;
+		int columnas = sala.getButacas().size() > 0 ? sala.getButacas().keySet().size() / filas : 0;
+
+		// Imprimir los encabezados de las columnas
 		System.out.print("   ");
-		for (int j = 0; j < butacas[0].length; j++) {
-			System.out.printf("%3d", j);
+		for (int j = 1; j <= columnas; j++) {
+			System.out.printf("%3d", j); // Se asume que las columnas son numéricas
 		}
 		System.out.println();
 
-		for (int i = 0; i < butacas.length; i++) {
-			System.out.printf("%2d ", i);
-			for (int j = 0; j < butacas[i].length; j++) {
-				char estado = butacas[i][j].estaOcupado() ? 'X' : 'O';
-				System.out.printf("%3c", estado);
+		// Imprimir las filas y sus estados
+		for (char fila = 'A'; fila < 'A' + filas; fila++) {
+			System.out.printf("%2c ", fila);
+			for (int columna = 1; columna <= columnas; columna++) {
+				String key = fila + String.valueOf(columna);
+				Asiento asiento = butacas.get(key);
+				if (asiento != null) {
+					char estado = asiento.estaOcupado() ? 'X' : 'O';
+					System.out.printf("%3c", estado);
+				}
 			}
 			System.out.println();
 		}

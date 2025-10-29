@@ -53,6 +53,24 @@ public class ProductoTest {
         assertEquals(precioEsperadoSinDescuento, comboSinDescuento.calcularPrecioFinal(), 0.01);
     }
 
+    @Test
+    public void testCompararProductosPorStock() {
+        Producto producto1 = new Snack("Nachos", 6.0, Tamano.MEDIANO, 10);
+        Producto producto2 = new Snack("Nachos", 6.0, Tamano.MEDIANO, 5);
 
+        assertTrue(producto1.compareTo(producto2) > 0); // producto1 tiene más stock que producto2
 
+        Producto producto3 = new Snack("Tacos", 5.0, Tamano.MEDIANO, 10);
+        assertTrue(producto1.compareTo(producto3) < 0); // "Nachos" viene después de "Tacos"
+    }
+    
+    @Test
+    public void testEqualsYHashCode() {
+        Producto producto1 = new Snack("Nachos", 6.0, Tamano.MEDIANO, 10);
+        Producto producto2 = new Snack("Nachos", 6.0, Tamano.MEDIANO, 15);
+
+        assertTrue(producto1.equals(producto2));  // Deberían ser iguales por nombre, no por stock
+        assertEquals(producto1.hashCode(), producto2.hashCode());
+    }
+    
 }
