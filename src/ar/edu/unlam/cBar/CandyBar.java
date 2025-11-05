@@ -69,31 +69,57 @@ public class CandyBar {
 		return new TreeSet<>(productos);
 	}
 
+	
+	
+	
 	public List<Bebida> obtenerBebidasOrdenadasPorPrecio() {
-		List<Bebida> lista = new ArrayList<>();
-		for (Producto p : productos) {
-			if (p instanceof Bebida) {
-				lista.add((Bebida) p);
-			}
-		}
+	    List<Bebida> lista = new ArrayList<>();
+	    
+	    for (Producto p : productos) {
+	        if (p instanceof Bebida) {
+	            lista.add((Bebida) p);
+	        }
+	    }
 
-		lista.sort(Comparator.comparingDouble(Bebida::getPrecioBase));
-
-		return lista;
+	    // Usamos el comparator de la clase aparte
+	    lista.sort(new ComparadorBebidaPorPrecio());
+	    
+	    return lista;
 	}
+	
+	
+	
 
-	public List<Snack> obtenerSnacksOrdenadosPorNombre() {
-		List<Snack> lista = new ArrayList<>();
-		for (Producto p : productos) {
-			if (p instanceof Snack) {
-				lista.add((Snack) p);
-			}
-		}
+public List<Snack> obtenerSnacksOrdenadosPorNombre() {
+    List<Snack> lista = new ArrayList<>();
+    
+    for (Producto p : productos) {
+        if (p instanceof Snack) {
+            lista.add((Snack) p);
+        }
+    }
 
-		lista.sort(Comparator.comparing(Snack::getNombre, String::compareToIgnoreCase));
-		return lista;
-	}
+    // Usamos el comparator definido en otra clase
+    lista.sort(new ComparadorSnackPorNombre());
+    
+    return lista;
 }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 //private Producto[]productos;
 //int cantidadDeProductos;
 //	public CandyBar(int cantidadDeProductos) {
